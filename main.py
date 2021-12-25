@@ -44,7 +44,8 @@ class MyGame(arcade.Window):
         for i in range(COIN_COUNT):
 
             # Create the coin instance
-            coin = arcade.Sprite(":resources:images/items/coinGold.png", SPRITE_SCALING_COIN)
+            scaling = [0.1, 0.25]
+            coin = arcade.Sprite(":resources:images/items/coinGold.png", random.choice(scaling))
 
             # Position the coin
             coin.center_x = random.randrange(SCREEN_WIDTH)
@@ -52,6 +53,16 @@ class MyGame(arcade.Window):
 
             # Add the coin to the lists
             self.coin_list.append(coin)
+
+        # Create the coin instance
+        coin = arcade.SpriteSolidColor(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, arcade.color.WHITE)
+
+        # Position the coin
+        coin.center_x = SCREEN_WIDTH // 2
+        coin.center_y = SCREEN_HEIGHT // 2
+
+        # Add the coin to the lists
+        self.coin_list.append(coin)
 
         arcade.set_background_color(arcade.color.AMAZON)
 
@@ -112,7 +123,6 @@ class MyGame(arcade.Window):
 def main():
     """ Main function """
     game = MyGame(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
-    game.setup()
     arcade.run()
 
 
