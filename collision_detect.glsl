@@ -43,8 +43,10 @@ void main()
     SpritePosition in_sprite_pos = InPos.sprite_positions[curSpriteIndex];
     SpriteSize in_sprite_size = InSize.sprite_sizes[curSpriteIndex];
     float dist = distance(in_sprite_pos.position, check_pos);
-    float max1 = max(check_size.x, check_size.y) / 2;
-    float max2 = max(in_sprite_size.size.x, in_sprite_size.size.y) / 2;
+
+    // How far away can they be? 1/2 the dimension of the longest width or height, times square root of 2
+    float max1 = max(check_size.x, check_size.y) / 2 * 1.42;
+    float max2 = max(in_sprite_size.size.x, in_sprite_size.size.y) / 2 * 1.42;
     int result = 111;
     if (dist < max1 + max2)
         result = 222;

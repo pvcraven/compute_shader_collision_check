@@ -30,7 +30,7 @@ class MyGame(arcade.Window):
         self.ssbo_2 = None
 
         # Don't forget to turn the spatial has on or off, depending on how you want to check
-        self.coin_list = arcade.SpriteList(use_spatial_hash=True)
+        self.coin_list = arcade.SpriteList(use_spatial_hash=False)
         self.player_list = arcade.SpriteList()
 
         # Set up the player
@@ -113,11 +113,12 @@ class MyGame(arcade.Window):
 
     def on_update(self, delta_time):
         # Get collision list the new way
-        list_length1 = self.new_check_for_collision_with_list(self.player_sprite, self.coin_list)
+        list_length_new = self.new_check_for_collision_with_list(self.player_sprite, self.coin_list)
         # Get collision list the old way
-        list_length2 = arcade.check_for_collision_with_list(self.player_sprite, self.coin_list)
+        list_length_old = arcade.check_for_collision_with_list(self.player_sprite, self.coin_list)
         # Check the length is the same
-        assert len(list_length1) == len(list_length2)
+        if len(list_length_new) != len(list_length_old):
+            print(f"Error: {len(list_length_new)=} != {len(list_length_old)=}")
 
 
 def main():
