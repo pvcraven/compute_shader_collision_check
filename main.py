@@ -6,8 +6,8 @@ SCREEN_WIDTH = 1600
 SCREEN_HEIGHT = 900
 SCREEN_TITLE = "Compute collision detect"
 
-COIN_COUNT = 30000
-SPRITE_SCALING_COIN = 0.25
+COIN_COUNT = 50000
+SPRITE_SCALING_COIN = 0.10
 SPRITE_SCALING_PLAYER = 0.25
 
 
@@ -30,7 +30,7 @@ class MyGame(arcade.Window):
         self.ssbo_2 = None
 
         # Don't forget to turn the spatial has on or off, depending on how you want to check
-        self.coin_list = arcade.SpriteList(use_spatial_hash=False)
+        self.coin_list = arcade.SpriteList(use_spatial_hash=True)
         self.player_list = arcade.SpriteList()
 
         # Set up the player
