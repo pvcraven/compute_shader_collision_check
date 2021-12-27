@@ -55,15 +55,26 @@ class MyGame(arcade.Window):
             self.coin_list.append(coin)
 
         # Create the coin instance
-        coin = arcade.SpriteSolidColor(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, arcade.color.WHITE)
+        coin = arcade.SpriteSolidColor(SCREEN_WIDTH // 4, SCREEN_HEIGHT // 4, arcade.color.WHITE)
 
         # Position the coin
-        coin.center_x = SCREEN_WIDTH // 2
-        coin.center_y = SCREEN_HEIGHT // 2
+        coin.center_x = SCREEN_WIDTH // 4
+        coin.center_y = SCREEN_HEIGHT // 4
 
         # Add the coin to the lists
         self.coin_list.append(coin)
 
+        # Create the coin instance
+        coin = arcade.SpriteSolidColor(SCREEN_WIDTH // 4, SCREEN_HEIGHT // 4, arcade.color.WHITE)
+
+        # Position the coin
+        coin.center_x = SCREEN_WIDTH * 3 // 4
+        coin.center_y = SCREEN_HEIGHT * 3 // 4
+
+        coin.angle = 45
+
+        # Add the coin to the lists
+        self.coin_list.append(coin)
         arcade.set_background_color(arcade.color.AMAZON)
 
     def on_draw(self):
