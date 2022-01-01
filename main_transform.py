@@ -1,14 +1,13 @@
 import random
 import struct
-import time
-
 import arcade
+from timer import Timer
 
 SCREEN_WIDTH = 1600
 SCREEN_HEIGHT = 900
 SCREEN_TITLE = "Compute collision detect"
 
-COIN_COUNT = 500
+COIN_COUNT = 50_000
 SPRITE_SCALING_COIN = 0.10
 SPRITE_SCALING_PLAYER = 0.25
 
@@ -18,7 +17,7 @@ class CollisionTransform(arcade.Window):
     def __init__(self):
         super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
         # Sprites
-        self.coin_list = arcade.SpriteList(use_spatial_hash=False)
+        self.coin_list = arcade.SpriteList(use_spatial_hash=True)
         self.player_list = arcade.SpriteList()
         self.avg = 0
 
@@ -29,7 +28,7 @@ class CollisionTransform(arcade.Window):
             SPRITE_SCALING_PLAYER,
             center_x = 50,
             center_y = 50,
-            hit_box_algorithm='None',
+            # hit_box_algorithm='None',
         )
         self.player_list.append(self.player_sprite)
 
@@ -42,7 +41,7 @@ class CollisionTransform(arcade.Window):
                 random.choice(scaling),
                 center_x=random.randrange(SCREEN_WIDTH),
                 center_y=random.randrange(SCREEN_HEIGHT),
-                hit_box_algorithm='None',
+                # hit_box_algorithm='None',
             )
             self.coin_list.append(coin)
 
@@ -64,27 +63,31 @@ class CollisionTransform(arcade.Window):
         )
         self.buffer = self.ctx.buffer(reserve=len(self.coin_list) * 4)
         self.query = self.ctx.query()
+        self.timer_1 = Timer()
+        self.timer_2 = Timer()
 
     def on_draw(self):
         self.clear()
         self.coin_list.draw()
-        self.coin_list.draw_hit_boxes(color=(0, 255, 0, 255))
+        # self.coin_list.draw_hit_boxes(color=(0, 255, 0, 255))
         self.player_list.draw()
-        self.player_list.draw_hit_boxes(color=(255, 255, 255, 255))
+        # self.player_list.draw_hit_boxes(color=(255, 255, 255, 255))
 
     def on_update(self, delta_time: float):
-        t = time.perf_counter()
-        sprites = self.new_check_for_collision_with_list(self.player_sprite, self.coin_list)
-        t = time.perf_counter() - t
-        if self.avg == 0:
-            self.avg = t
-        else:
-            self.avg += t
-            self.avg /= 2.0
+        with self.timer_1:
+            sprites = self.new_check_for_collision_with_list(self.player_sprite, self.coin_list)
+
+        print(f"Tranform check: {self.timer_1.avg}")
 
         # print(f"col check {len(sprites)}: {t} avg {self.avg}")
+        # Color the sprites red
         for sprite in sprites:
             sprite.color = 255, 0, 0, 255
+
+        with self.timer_2:
+            arcade.check_for_collision_with_list(self.player_sprite, self.coin_list)
+
+        print(f"Python check: {self.timer_2.avg}")
 
     def on_mouse_motion(self, x, y, dx, dy):
         """ Handle Mouse Motion """
