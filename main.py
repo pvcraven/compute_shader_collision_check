@@ -1,12 +1,13 @@
-import array
+import struct
 import random
 import arcade
+from timer import Timer
 
 SCREEN_WIDTH = 1600
 SCREEN_HEIGHT = 900
 SCREEN_TITLE = "Compute collision detect"
 
-COIN_COUNT = 50000
+COIN_COUNT = 50_000
 SPRITE_SCALING_COIN = 0.10
 SPRITE_SCALING_PLAYER = 0.25
 
@@ -76,6 +77,8 @@ class MyGame(arcade.Window):
         # Add the coin to the lists
         self.coin_list.append(coin)
         arcade.set_background_color(arcade.color.AMAZON)
+        self.timer = Timer()
+        self.buffer = self.ctx.buffer(reserve=1024)
 
     def on_draw(self):
         """ Render the screen. """
@@ -92,17 +95,13 @@ class MyGame(arcade.Window):
         self.player_sprite.center_x = x
         self.player_sprite.center_y = y
 
-    def new_check_for_collision_with_list(self, sprite, sprite_list):
+    def new_check_for_collision_with_list(self, sprite: arcade.Sprite, sprite_list: arcade.SpriteList):
 
-        # Don't recreate the buffer if it already exists
-        # if not self.ssbo_0:
-        self.ssbo_0 = self.ctx.buffer(data=sprite_list._sprite_pos_data)
-        self.ssbo_1 = self.ctx.buffer(data=sprite_list._sprite_size_data)
-        self.ssbo_2 = self.ctx.buffer(reserve=self.ssbo_0.size // 2)
+        self.buffer.orphan(size=len(sprite_list) * 4)
 
-        self.ssbo_0.bind_to_storage_buffer(binding=0)
-        self.ssbo_1.bind_to_storage_buffer(binding=1)
-        self.ssbo_2.bind_to_storage_buffer(binding=2)
+        sprite_list._sprite_pos_buf.bind_to_storage_buffer(binding=0)
+        sprite_list._sprite_size_buf.bind_to_storage_buffer(binding=1)
+        self.buffer.bind_to_storage_buffer(binding=2)
 
         self.compute_shader["check_pos"] = sprite.position
         self.compute_shader["check_size"] = sprite.width, sprite.height
@@ -112,10 +111,8 @@ class MyGame(arcade.Window):
 
         # Get the results for the compute shader
         # This is a list of sprites that can collide, but might not be colliding
-        data = self.ssbo_2.read()
-        arr = array.array('i')
-        arr.frombytes(data)
-        sub_list = [sprite_list[index] for index, number in enumerate(arr) if number == 222]
+        data = struct.unpack(f"{len(sprite_list)}i", self.buffer.read())
+        sub_list = [sprite_list[index] for index, number in enumerate(data) if number == 222]
 
         # Now do a more detailed check and see if they collided
         collision_list = [cur_sprite for cur_sprite in sub_list if arcade.check_for_collision(sprite, cur_sprite)]
@@ -124,7 +121,14 @@ class MyGame(arcade.Window):
 
     def on_update(self, delta_time):
         # Get collision list the new way
-        list_length_new = self.new_check_for_collision_with_list(self.player_sprite, self.coin_list)
+        with self.timer:
+            list_length_new = self.new_check_for_collision_with_list(self.player_sprite, self.coin_list)
+
+        print(f"Compute shader timer: {self.timer.avg}")
+
+        for sprite in list_length_new:
+            sprite.color = 255, 0, 0, 255
+
         # Get collision list the old way
         list_length_old = arcade.check_for_collision_with_list(self.player_sprite, self.coin_list)
         # Check the length is the same

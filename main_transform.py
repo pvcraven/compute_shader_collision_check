@@ -87,7 +87,7 @@ class CollisionTransform(arcade.Window):
         with self.timer_2:
             arcade.check_for_collision_with_list(self.player_sprite, self.coin_list)
 
-        print(f"Python check: {self.timer_2.avg}")
+        # print(f"Python check: {self.timer_2.avg}")
 
     def on_mouse_motion(self, x, y, dx, dy):
         """ Handle Mouse Motion """
