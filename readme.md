@@ -1,4 +1,6 @@
-Collision Detection Using the Compute Shader
-==
+# Collision Detection Using Shader
 
-This quick example does collision detection with and without using the compute shader.
+This quick example does collision detection with
+
+* Compute Shader (`main.py`)
+* Transform Shader (`main_transform.py`)
