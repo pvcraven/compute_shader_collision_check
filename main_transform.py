@@ -92,6 +92,10 @@ class CollisionTransform(arcade.Window):
         if len(sprites1) != len(sprites2):
             print(f"Error: {len(sprites1)=} != {len(sprites2)=}")
 
+        for sprite in sprites2:
+            if sprite not in sprites1:
+                sprite.color = 255,0 ,0 , 255
+
         # print(f"Python check: {self.timer_2.avg}")
 
     def on_mouse_motion(self, x, y, dx, dy):
