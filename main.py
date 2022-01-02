@@ -124,10 +124,10 @@ class MyGame(arcade.Window):
         with self.timer:
             list_length_new = self.new_check_for_collision_with_list(self.player_sprite, self.coin_list)
 
-        print(f"Compute shader timer: {self.timer.avg}")
+        # print(f"Compute shader timer: {self.timer.avg}")
 
-        for sprite in list_length_new:
-            sprite.color = 255, 0, 0, 255
+        # for sprite in list_length_new:
+        #     sprite.color = 255, 0, 0, 255
 
         # Get collision list the old way
         list_length_old = arcade.check_for_collision_with_list(self.player_sprite, self.coin_list)

@@ -75,17 +75,22 @@ class CollisionTransform(arcade.Window):
 
     def on_update(self, delta_time: float):
         with self.timer_1:
-            sprites = self.new_check_for_collision_with_list(self.player_sprite, self.coin_list)
+            sprites1 = self.new_check_for_collision_with_list(self.player_sprite, self.coin_list)
 
-        print(f"Tranform check: {self.timer_1.avg}")
+
+
+        # print(f"Tranform check: {self.timer_1.avg}")
 
         # print(f"col check {len(sprites)}: {t} avg {self.avg}")
         # Color the sprites red
-        for sprite in sprites:
-            sprite.color = 255, 0, 0, 255
+        # for sprite in sprites:
+        #     sprite.color = 255, 0, 0, 255
 
         with self.timer_2:
-            arcade.check_for_collision_with_list(self.player_sprite, self.coin_list)
+            sprites2 = arcade.check_for_collision_with_list(self.player_sprite, self.coin_list)
+
+        if len(sprites1) != len(sprites2):
+            print(f"Error: {len(sprites1)=} != {len(sprites2)=}")
 
         # print(f"Python check: {self.timer_2.avg}")
 
@@ -116,10 +121,14 @@ class CollisionTransform(arcade.Window):
             return []
 
         # .. otherwise build and return a list of the sprites selected by the transform
-        return [
+        sprite_list_to_check =  [
             sprite_list[i] 
             for i in struct.unpack(f'{num_sprites}i', self.buffer.read(size=num_sprites * 4))
         ]
-
+        sprites = []
+        for sprite2 in sprite_list_to_check:
+            if sprite is not sprite2 and arcade.check_for_collision(sprite, sprite2):
+                sprites.append(sprite2)
+        return sprites
 
 CollisionTransform().run()
